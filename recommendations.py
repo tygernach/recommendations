@@ -13,4 +13,4 @@ def sim_distance(prefs, person1, person2):
     
     if len(si) == 0: return 0
     total_sum = sum([pow(prefs[person1][item] - prefs[person2][item],2) for item in prefs[person1] if item in prefs[person2]])
-    return 1 / (1 + total_sum)
+    return 1 / (1 + sqrt(total_sum))
