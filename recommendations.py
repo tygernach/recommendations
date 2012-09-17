@@ -91,4 +91,44 @@ def transformPrefs(prefs):
             result.setdefault(item,{})
             result[item][person] = prefs[person][item]
     return result
+
+def calculateSimilarItems(prefs, n=10):
+    #create dict with si,ilar items for every item
+    result = {}
+
+    itemPrefs = transformPrefs(prefs)
+    c = 0
+    for item in itemPrefs:
+        #renew for big datasets
+        c+=1
+        if c%100 == 0: print "%d / %d" % (c, len(itemPrefs))
+        #find most similar items for current
+        scores = topMatches(itemPrefs, item, n=n, similarity=sim_distance)
+        result[item] = scores
+
+    return result
+
+def getRecommendedItems(prefs,itemMatch,user):
+    userRatings = prefs[user]
+    scores = {}
+    totalSim = {}
+
+    #for items rated by user
+    for (item,rating) in userRatings.items():
+        #for items similar to current
+        for (similarity, item2) in itemMatch[item]:
+            #skip already rated
+            if item2 in userRatings: continue
+            #weighted sum of rates
+            scores.setdefault(item2,0)
+            scores[item2]+=similarity*rating
+
+            totalSim.setdefault(item2,0)
+            totalSim[item2]+=similarity
+
+    rankings = [(score / totalSim[item], item) for item, score in scores.items() if totalSim[item] != 0]
+
+    rankings.sort()
+    rankings.reverse()
+    return rankings
     
