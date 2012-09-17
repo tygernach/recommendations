@@ -11,7 +11,7 @@ def sim_distance(prefs, person1, person2):
     #Euclidian distance
     si = {}
     for item in prefs[person1]:
-        for item in prefs[person2]:
+        if item in prefs[person2]:
            si[item] = 1
            break
     print(si)
