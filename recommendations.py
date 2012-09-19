@@ -131,4 +131,43 @@ def getRecommendedItems(prefs,itemMatch,user):
     rankings.sort()
     rankings.reverse()
     return rankings
+
+def loadMovieLens(path=u'ml-100k'):
+    #get movies titles
+    movies = {}
+    for line in open(path+u'/u.item'):
+        (id, title) = line.split('|')[:2]
+        movies[id] = title
+
+    #load data
+    prefs = {}
+    for line in open(path+u'/u.data'):
+        (user, movie_id, rating, ts) = line.split('\t')
+        prefs.setdefault(user, {})
+        prefs[user][movies[movie_id]] = float(rating)
+    return prefs
+
+def prepare_for_tanimoto(prefs):
+    result = {}
+    for person in prefs:
+        result.setdefault(person,{})
+        for item in prefs[person]:
+            result[person][item] = (0,1)[prefs[person][item] > 3]
+
+    return result
+    
+def sim_tanimoto(prefs, p1, p2):
+    prefs = prepare_for_tanimoto(prefs)
+    
+    si = {}
+    for item in prefs[p1]:
+        if item in prefs[p2] and prefs[p2][item] == prefs[p1][item]:
+           si[item] = 1
+    
+    c = len(si)
+    
+    if c == 0: return 0
+    
+    return float(c) / (len(prefs[p1]) + len(prefs[p2]) - c)
+    
     

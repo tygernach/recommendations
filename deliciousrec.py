@@ -1,4 +1,4 @@
-from pydelicious import get_popular, get_userposts, get_urlposts
+from pydelicious import get_popular, get_userposts, get_urlposts, getrss
 
 def initializeUserDict(tag, count=5):
     user_dict={}
@@ -32,3 +32,14 @@ def fillItems(user_dict):
 	for item in all_items:
 	    if item not in ratings:
 		ratings[item] = 0.0
+
+def getTags(n=30):
+    tags = {}
+    for i in range(3):
+	try:
+	    tags = get_feed()
+	    break
+	except:
+	    print u'Error getting rss, trying once more'
+	    time.sleep(4)
+    print tags
