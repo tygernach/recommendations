@@ -156,8 +156,8 @@ def prepare_for_tanimoto(prefs):
 
     return result
     
-def sim_tanimoto(prefs, p1, p2):
-    prefs = prepare_for_tanimoto(prefs)
+def sim_tanimoto(prefs, p1, p2, prepare = False):
+    if prepare: prefs = prepare_for_tanimoto(prefs)
     
     si = {}
     for item in prefs[p1]:

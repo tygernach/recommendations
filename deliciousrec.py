@@ -33,13 +33,29 @@ def fillItems(user_dict):
 	    if item not in ratings:
 		ratings[item] = 0.0
 
-def getTags(n=30):
-    tags = {}
-    for i in range(3):
-	try:
-	    tags = get_feed()
-	    break
-	except:
-	    print u'Error getting rss, trying once more'
-	    time.sleep(4)
-    print tags
+def getTags():
+    user_dict = initializeUserDict('curious')
+    all_items = {}
+    tags_dict = {}
+    #find links saved by all users
+    for user in user_dict:
+	for i in range(3):
+	    try:
+		posts = get_userposts(user)
+		break
+	    except:
+		print u'Error for user '+user+u', trying one more time'
+		time.sleep(4)
+	for post in posts:
+	    url = post['url']
+	    tag = post['tags']
+	    tags_dict.setdefault(tag,{})
+	    tags_dict[tag][url] = 1.0
+	    all_items[url] = 1
+
+    #instead of empty elements write 0
+    for ratings in tags_dict.values():
+	for item in all_items:
+	    if item not in ratings:
+		ratings[item] = 0.0
+    return tags_dict
